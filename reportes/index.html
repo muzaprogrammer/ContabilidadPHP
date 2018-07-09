@@ -1,0 +1,98 @@
+<?php
+
+include "conexion.php";
+
+$user_id=null;
+if(!empty($_POST)){
+	if(isset($_POST["inicio"]) &&isset($_POST["fin"])){
+$sql1= "SELECT salidas.id, salidas.fecha, salidas.factura, proveedores.nrc, proveedores.nombre, salidas.gravadas_locales, salidas.credito_fiscal, salidas.fovial_cesc_iva, salidas.total FROM salidas INNER JOIN proveedores ON salidas.id_provee=proveedores.id WHERE salidas.fecha between \"$_POST[inicio]\" and \"$_POST[fin]\" AND proveedores.id > \"$_POST[facturas]\" ORDER BY salidas.id asc";
+}}
+$query = $con->query($sql1);
+
+?>
+
+<?php if($query->num_rows>0):?>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Example 1</title>
+    <link rel="stylesheet" href="style.css" media="all" />
+  </head>
+  <body>
+    <header class="clearfix">
+      <div id="logo">
+        <img src="logo.png">
+      </div>
+      <h1>SALIDAS INGUNIXX</h1>
+      <div id="company" class="clearfix">
+        <div>Company Name</div>
+        <div>455 Foggy Heights,<br /> AZ 85004, US</div>
+        <div>(602) 519-0450</div>
+        <div><a href="mailto:company@example.com">company@example.com</a></div>
+      </div>
+      <div id="project">
+        <div><span>PROJECT</span> Website development</div>
+        <div><span>CLIENT</span> John Doe</div>
+        <div><span>ADDRESS</span> 796 Silver Harbour, TX 79273, US</div>
+        <div><span>EMAIL</span> <a href="mailto:john@example.com">john@example.com</a></div>
+        <div><span>DATE</span> August 17, 2015</div>
+        <div><span>DUE DATE</span> September 17, 2015</div>
+      </div>
+    </header>
+    <main>
+      <table>
+        <thead>
+          <tr>
+    <th>CORELATIVO</th>
+	<th>FECHA</th>
+	<th>FACTURA</th>
+	<th>NRC</th>
+	<th>NOMBRE</th>
+	<th>GRAVADAS LOCALES</th>
+	<th>CREDITO FISCAL</th>
+	<th>FOVIAL/CESC</th>
+	<th>TOTAL</th>	
+          </tr>
+        </thead>
+        <tbody>
+          <?php while ($r=$query->fetch_array()):?>
+<tr>
+	<td><?php echo $r["id"]; ?></td>
+	<td><?php echo $r["fecha"]; ?></td>	
+	<td><?php echo $r["factura"]; ?></td>
+	<td><?php echo $r["nrc"]; ?></td>
+	<td><?php echo $r["nombre"]; ?></td>
+	<td><?php echo $r["gravadas_locales"]; ?></td>
+	<td><?php echo $r["credito_fiscal"]; ?></td>
+	<td><?php echo $r["fovial_cesc_iva"]; ?></td>
+	<td><?php echo $r["total"]; ?></td>
+	<td style="width:150px;">
+		<a href="./salida_editar.php?id=<?php echo $r["id"];?>" class="btn btn-sm btn-warning">Editar</a>
+		<a href="#" id="del-<?php echo $r["id"];?>" class="btn btn-sm btn-danger">Eliminar</a>
+		<script>
+		$("#del-"+<?php echo $r["id"];?>).click(function(e){
+			e.preventDefault();
+			p = confirm("Estas seguro?");
+			if(p){
+				window.location="./php/salida_eliminar.php?id="+<?php echo $r["id"];?>;
+
+			}
+
+		});
+		</script>
+	</td>
+</tr>		
+<?php endwhile;?>
+<?php else:?>	
+	<p class="alert alert-warning">No hay resultados</p>
+<?php endif;?>
+        </tbody>
+      </table>
+      <div id="notices">
+        <div>NOTICE:</div>
+        <div class="notice">A finance charge of 1.5% will be made on unpaid balances after 30 days.</div>
+      </div>
+    </main>    
+  </body>
+</html>
